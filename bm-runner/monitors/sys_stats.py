@@ -37,6 +37,7 @@ class MpstatCmd:
         # This acts like ctrl+C
         self.process.send_signal(signal.SIGINT)
 
+    # TODO: try catch and error handling
     def read_output(self) -> dict:
         with open(self.fname, "r") as f:
             return json.load(f)
