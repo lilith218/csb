@@ -75,7 +75,5 @@ foreach(target IN ITEMS ${TARGETS})
     add_test(NAME ${TEST_CASE} COMMAND ${TEST_CASE} ${PARAMS})
 endforeach()
 
-# Compile client
-set(CLIENT_NAME "client")
-add_executable(${CLIENT_NAME} client.c)
-target_link_libraries(${CLIENT_NAME} hiredis)
+
+add_subdirectory(network)
