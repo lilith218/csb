@@ -4,10 +4,10 @@ foreach(AGENT ${AGENTS})
     message(STATUS "Adding agent ${AGENT}")
     get_filename_component(AGENT_NAME ${AGENT} NAME_WLE)
     add_executable(${AGENT_NAME} ${AGENT})
-    # TODO: if required
-    target_link_libraries(${AGENT_NAME} hiredis)
+    if (${AGENT_NAME} STREQUAL "redis-client")
+        target_link_libraries(${AGENT_NAME} hiredis)
+    endif()
 endforeach(AGENT)
-# Compile client
 
-
-
+add_test(NAME client-server-comm
+         COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test-comm.sh)

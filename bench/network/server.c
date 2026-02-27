@@ -143,9 +143,13 @@ readwrite(struct epoll_event *ev, int efd)
     if (ev->events & EPOLLOUT) {
         assert(!eops[d->step].is_write);
         r = send(fd, &sbuf[0], eops[d->step].sz, 0);
+        if(r > 0)
+            printf("[send] %s\n", sbuf);
     } else if (ev->events & EPOLLIN) {
         assert(eops[d->step].is_write);
         r = recv(fd, &sbuf[0], eops[d->step].sz, 0);
+        if(r > 0)
+            printf("[recv] %s\n", sbuf);
     }
     if (r == -1) {
         unregister(d, efd);
@@ -173,8 +177,9 @@ main(int argc, char *argv[])
     size_t port   = 10000;
     char *program = NULL;
     bool use_ipv6 = false;
-    int opt;
-    while ((opt = getopt(argc, argv, "6p:P:")) != -1) {
+    int opt       = 0;
+    bool only_once = false;
+    while ((opt = getopt(argc, argv, "6p:P:O")) != -1) {
         switch (opt) {
             case 'p':
                 port = strtoul(optarg, NULL, 0);
@@ -187,6 +192,9 @@ main(int argc, char *argv[])
                 use_ipv6 = true;
             case 'P':
                 program = optarg;
+                break;
+            case 'O':
+                only_once = true;
                 break;
             default: /* '?' */
                 usage(argv[0]);
@@ -209,10 +217,12 @@ main(int argc, char *argv[])
     struct epoll_event ev;
     int efd = epoll_create1(0);
     if (efd == -1) {
+        fprintf(stderr, "epoll_create1 failed!\n");
         return 1;
     }
     int lsock = socket(use_ipv6 ? AF_INET6 : AF_INET, SOCK_STREAM, 0);
     if (lsock == -1) {
+        fprintf(stderr, "socket failed!\n");
         return 1;
     }
 
@@ -281,8 +291,13 @@ main(int argc, char *argv[])
                 }
             } else {
                 readwrite(&evs[i], efd);
+                if(only_once) {
+                    goto EXIT;
+                }
             }
         }
     }
+EXIT:
+    printf("Server exited!\n");
     return 0;
 }

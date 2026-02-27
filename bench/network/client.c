@@ -195,9 +195,10 @@ main(int argc, char *argv[])
     char *host      = NULL;
     char *program   = NULL;
     bool use_ipv6   = false;
-    int opt;
+    int opt         = 0;
     bool retry_on_fail = false; /* retry if the connection fails till it succeeds*/
-    while ((opt = getopt(argc, argv, "6h:p:P:R")) != -1) {
+    bool only_once     = false;
+    while ((opt = getopt(argc, argv, "6h:p:P:RO")) != -1) {
         switch (opt) {
             case 'h':
                 host = optarg;
@@ -216,6 +217,9 @@ main(int argc, char *argv[])
                 break;
             case 'R':
                 retry_on_fail = true;
+                break;
+            case 'O':
+                only_once = true;
                 break;
             default: /* '?' */
                 usage(argv[0]);
@@ -326,17 +330,18 @@ main(int argc, char *argv[])
     printf("%zu connections established.\n", est.nconn);
     while (est.nconn) {
         struct epoll_event evs[MAX_EVS];
-        printf("waiting ... \n");
         int nfds = epoll_wait(est.fd, &evs[0], MAX_EVS, -1);
         if (nfds == -1) {
-            perror("epoll_wait");
+
             continue;
         }
-        printf("waiting ... nfds: %d \n", nfds);
         for (int i = 0; i < nfds; i++) {
             readwrite(&evs[i], &est);
         }
+        if(only_once) {
+            break;
+        }
     }
-    printf("Exiting.\n");
+    printf("Client exited!\n");
     return 0;
 }
