@@ -18,7 +18,10 @@ elseif(CSB_THREAD_SANITIZER)
     target_link_options(CSB INTERFACE -fsanitize=thread)
 endif()
 
-file(GLOB TARGETS CONFIGURE_DEPENDS targets/*.h)
+# search subdirectories as well
+file(GLOB_RECURSE TARGETS CONFIGURE_DEPENDS targets/*.h)
+# exclude files under syz
+list(FILTER TARGETS EXCLUDE REGEX ".*/syz/.*")
 
 set(BM_DEFS _GNU_SOURCE)
 
@@ -51,8 +54,18 @@ set(BM_FILE benchmark.c)
 
 foreach(target IN ITEMS ${TARGETS})
     get_filename_component(bm_target_prefix ${target} NAME_WLE)
+    get_filename_component(PARENT "${target}" DIRECTORY)
+
+    if("${PARENT}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/targets")
+        set(TARGET_PREFIX "")
+    else()
+        # get direct parent directory name
+        get_filename_component(PARENT "${PARENT}" NAME)
+        string(TOLOWER "${PARENT}_" TARGET_PREFIX)
+    endif()
+
     set(bm_target_name "\"${target}\"")
-    set(TEST_CASE ${bm_target_prefix})
+    set(TEST_CASE "${TARGET_PREFIX}${bm_target_prefix}")
 
     string(TOLOWER ${TEST_CASE} TEST_CASE)
 
@@ -67,7 +80,7 @@ foreach(target IN ITEMS ${TARGETS})
                                                -Wno-unused-function)
     # use -fno-var-tracking to speed up compilation of big auto-generated test
     # cases
-    if(bm_target_prefix MATCHES "^min_.*")
+    if(bm_target_prefix MATCHES ".*min_.*")
         target_compile_options(${TEST_CASE} PRIVATE "-fno-var-tracking")
     endif()
 

@@ -54,7 +54,7 @@
   },
   "applications": [
     {
-      "name": "min_mysql_lseek_read_1_0",
+      "name": "mysql_min_mysql_pread64_faccessat2_0_5",
       "operations": [
         1024
       ]

@@ -9,7 +9,7 @@ if [ "${STYLE}" != "" ]; then
     STYLE=":${STYLE}"
 fi
 
-git ls-files '*.h' '*.c' | grep -v 'deps' | grep -v 'bench/targets/syz/' | xargs -I {} clang-format -style=file${STYLE} -i "$(pwd)/{}"
+git ls-files '*.h' '*.c' | grep -v 'deps' | grep -v '/syz/' | xargs -I {} clang-format -style=file${STYLE} -i "$(pwd)/{}"
 
 
 if [ "${SILENT}" != "true" ]; then

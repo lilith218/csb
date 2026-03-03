@@ -28,7 +28,8 @@ else
 fi
 
 # detect all available benchmark configurations
-BENCHMARKS_CONFIGS=( config/*.json )
+shopt -s globstar
+BENCHMARKS_CONFIGS=( config/**/*.json )
 
 echo "The following benchmarks are available, select one to run"
 

@@ -54,7 +54,7 @@
   },
   "applications": [
     {
-      "name": "min_mysql_newfstatat_openat_0_1",
+      "name": "mysql_min_mysql_openat_fsync_0_2",
       "operations": [
         1024
       ]

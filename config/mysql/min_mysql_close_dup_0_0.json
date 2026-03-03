@@ -54,7 +54,7 @@
   },
   "applications": [
     {
-      "name": "min_mysql_pread64_faccessat2_0_5",
+      "name": "mysql_min_mysql_close_dup_0_0",
       "operations": [
         1024
       ]
