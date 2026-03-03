@@ -18,7 +18,10 @@ elseif(CSB_THREAD_SANITIZER)
     target_link_options(CSB INTERFACE -fsanitize=thread)
 endif()
 
-file(GLOB TARGETS CONFIGURE_DEPENDS targets/*.h)
+# search subdirectories as well
+file(GLOB_RECURSE TARGETS CONFIGURE_DEPENDS targets/*.h)
+# exclude files under syz
+list(FILTER TARGETS EXCLUDE REGEX ".*/syz/.*")
 
 set(BM_DEFS _GNU_SOURCE)
 
