@@ -54,7 +54,7 @@
   },
   "applications": [
     {
-      "name": "min_mysql_read_close_0_0",
+      "name": "mysql_min_mysql_read_close_0_0",
       "operations": [
         1024
       ]

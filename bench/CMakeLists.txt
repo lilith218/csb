@@ -54,8 +54,18 @@ set(BM_FILE benchmark.c)
 
 foreach(target IN ITEMS ${TARGETS})
     get_filename_component(bm_target_prefix ${target} NAME_WLE)
+    get_filename_component(PARENT "${target}" DIRECTORY)
+
+    if("${PARENT}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/targets")
+        set(TARGET_PREFIX "")
+    else()
+        # get direct parent directory name
+        get_filename_component(PARENT "${PARENT}" NAME)
+        string(TOLOWER "${PARENT}_" TARGET_PREFIX)
+    endif()
+
     set(bm_target_name "\"${target}\"")
-    set(TEST_CASE ${bm_target_prefix})
+    set(TEST_CASE "${TARGET_PREFIX}${bm_target_prefix}")
 
     string(TOLOWER ${TEST_CASE} TEST_CASE)
 

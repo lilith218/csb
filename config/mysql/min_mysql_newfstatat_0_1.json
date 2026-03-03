@@ -54,7 +54,7 @@
   },
   "applications": [
     {
-      "name": "min_mysql_newfstatat_0_1",
+      "name": "mysql_min_mysql_newfstatat_0_1",
       "operations": [
         1024
       ]
