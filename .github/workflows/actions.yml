@@ -210,7 +210,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: results-${{ github.run_id }}
+          name: results-${{ matrix.benchmark.config }}
           path: results/
 
   Check-Submodule-Commit:
