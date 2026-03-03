@@ -80,7 +80,7 @@ foreach(target IN ITEMS ${TARGETS})
                                                -Wno-unused-function)
     # use -fno-var-tracking to speed up compilation of big auto-generated test
     # cases
-    if(bm_target_prefix MATCHES "^min_.*")
+    if(bm_target_prefix MATCHES ".*min_.*")
         target_compile_options(${TEST_CASE} PRIVATE "-fno-var-tracking")
     endif()
 
