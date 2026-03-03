@@ -22,7 +22,8 @@ file(GLOB TEMPLATES *single*.in)
 # Output subfolder for auto-generated workspace
 set(SUBDIR "gen-ws")
 # Collect all input headers
-file(GLOB HEADERS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/bench/targets/${SUBDIR}/syz/*.h")
+file(GLOB HEADERS CONFIGURE_DEPENDS
+     "${CMAKE_SOURCE_DIR}/bench/targets/${SUBDIR}/syz/*.h")
 # Output dir for config files
 set(CONFIG_DIR "${CMAKE_SOURCE_DIR}/config")
 file(MAKE_DIRECTORY "${CONFIG_DIR}/${SUBDIR}")
