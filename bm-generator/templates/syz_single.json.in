@@ -33,10 +33,7 @@
 	],
 	"benchmark_config" : {
 		"duration": 60,
-<<<<<<< HEAD
-		"initial_size": [5000],
-=======
->>>>>>> c1b5f05 (update template)
+	    "initial_size": [5000],
 		"exec_env": ["native"],
 		"monitors" : { "mpstat" : ["-n", "-u", "-I", "SCPU,SUM", "-P", "0"],
 			       "perf" : ["-C", "0"]
