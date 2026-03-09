@@ -12,7 +12,7 @@ START_PORT=$1
 CLIENT_COUNT=$2
 START_FILE=$3
 CLIENT_PATH=$4
-IP="127.0.0.0"
+IP="127.0.0.1"
 
 echo "#of clients: $CLIENT_COUNT"
 echo "starting port: $START_PORT"
