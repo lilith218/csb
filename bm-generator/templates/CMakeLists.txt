@@ -50,11 +50,13 @@ foreach(HEADER ${HEADERS})
                 # pass it if that's the case
                 set(META_NAME "${HEADER_NAME}.meta")
             else()
-                # otherwise set it to empty, and related section(s) will be turned off
+                # otherwise set it to empty, and related section(s) will be
+                # turned off
                 set(META_NAME="")
             endif()
-            set(TMPLR_PARAMS -DPROBAVG="" -DPROBEND="1024"
-                             -DBINNAME="${SUBDIR}_${HEADER_NAME}" -DMETA_NAME="${META_NAME}")
+            set(TMPLR_PARAMS
+                -DPROBAVG="" -DPROBEND="1024"
+                -DBINNAME="${SUBDIR}_${HEADER_NAME}" -DMETA_NAME="${META_NAME}")
             set(OUTPUT_FILE "${CONFIG_DIR}/${SUBDIR}/${HEADER_NAME}.json")
         elseif(EXTENSION STREQUAL ".h")
             set(TARGET ${HEADER_NAME}_h)
