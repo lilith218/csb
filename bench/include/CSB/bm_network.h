@@ -19,7 +19,7 @@ static bool bm_bind_addr_inited = false;
 
 static inline void
 parse_net_addr(const char *addr_env, const char *port_env,
-               struct sockaddr_in *dst, bool *initialized, uint64_t sin_port)
+               struct sockaddr_in *dst, bool *initialized, uint16_t sin_port)
 {
     const char *conn_addr_str = getenv(addr_env);
     const char *conn_port_str = getenv(port_env);
