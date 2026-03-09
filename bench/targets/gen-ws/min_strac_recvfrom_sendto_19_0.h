@@ -412,105 +412,17 @@ bm_target_init_connection(thread_ctx_t *ctx)
 static inline void
 bm_target_init(size_t init_size, size_t num_threads)
 {
-    V_UNUSED(init_size, num_threads);
-    int numNetOpsConnect = 0;
-    int numNetOpsAccept  = 0;
-    char *netOpsArgsConnect[1024];
-    char *netOpsArgsAccept[1024];
-    int netOpsArgsIdxConnect = 0;
-    int netOpsArgsIdxAccept  = 0;
     op_name_tbl[0]           = "min_strac_recvfrom_sendto_19_0";
     g_port_bind              =  init_size;
 
     fprintf(stderr, "Should listen on port %zu\n", g_port_bind);
-    // Server command (connect syscall)
-    numNetOpsConnect =
-        sizeof(netops_connect_min_strac_recvfrom_sendto_19_0_prog) /
-        sizeof(char *);
-    for (int i = 0; i < numNetOpsConnect; i++) {
-        netOpsArgsConnect[netOpsArgsIdxConnect] =
-            (char *)netops_connect_min_strac_recvfrom_sendto_19_0_prog[i];
-        netOpsArgsIdxConnect++;
-    }
-
-    // Client command (accept[4] syscall)
-    numNetOpsAccept =
-        sizeof(netops_accept_min_strac_recvfrom_sendto_19_0_prog) /
-        sizeof(char *);
-    for (int i = 0; i < numNetOpsAccept; i++) {
-        netOpsArgsAccept[netOpsArgsIdxAccept] =
-            (char *)netops_accept_min_strac_recvfrom_sendto_19_0_prog[i];
-        netOpsArgsIdxAccept++;
-    }
-
-    // Server command (connect syscall)
-    char *pattern_args      = NULL;
-    size_t pattern_args_len = 0;
-    FILE *pattern_stream    = open_memstream(&pattern_args, &pattern_args_len);
-    if (!pattern_stream) {
-        assert(0);
-    }
-    for (int i = 0; i < netOpsArgsIdxConnect; i++) {
-        fprintf(pattern_stream, "-P%s ", netOpsArgsConnect[i]);
-    }
-    fclose(pattern_stream);
-
-    if (netOpsArgsIdxConnect > 0) {
-        FILE *fp_server;
-        fp_server = fopen("server_min_strac_recvfrom_sendto_19_0.sh",
-                          "w"); // Open server shell script for writing
-        fprintf(fp_server, "#!/bin/bash\n");
-        fprintf(fp_server, " : ${DIR_SERVER:=./network}\n");
-        fprintf(fp_server, " : ${PORT_SERVER:=36721}\n");
-        fprintf(fp_server, "${DIR_SERVER}/server -p${PORT_SERVER} %s\n",
-                pattern_args);
-        fclose(fp_server);
-        chmod("server_min_strac_recvfrom_sendto_19_0.sh",
-              S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP |
-                  S_IROTH | S_IWOTH | S_IXOTH);
-        fprintf(stderr,
-                "PORT_SERVER=36721 DIR_SERVER=\"network\" "
-                "./server_min_strac_recvfrom_sendto_19_0.sh\n");
-    }
-
-    // Client command (accept[4] syscall)
-    free(pattern_args);
-    pattern_args   = NULL;
-    pattern_stream = open_memstream(&pattern_args, &pattern_args_len);
-    if (!pattern_stream) {
-        assert(0);
-    }
-
-    for (int i = 0; i < netOpsArgsIdxAccept; i++) {
-        fprintf(pattern_stream, "-P%s ", netOpsArgsAccept[i]);
-    }
-    fclose(pattern_stream);
-
-    if (netOpsArgsIdxAccept > 0) {
-        FILE *fp_client;
-        fp_client = fopen("client_min_strac_recvfrom_sendto_19_0.sh",
-                          "w"); // Open file for writing
-        fprintf(fp_client, "#!/bin/bash\n");
-        fprintf(fp_client, " : ${DIR_CLIENT:=./network}\n");
-        fprintf(fp_client, " : ${PORT_CLIENT:=46721}\n");
-        fprintf(fp_client,
-                "${DIR_CLIENT}/client -h 127.0.0.1 -p${PORT_CLIENT} %s\n",
-                pattern_args);
-        fclose(fp_client);
-        chmod("client_min_strac_recvfrom_sendto_19_0.sh",
-              S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP |
-                  S_IROTH | S_IWOTH | S_IXOTH);
-        fprintf(stderr,
-                "PORT_CLIENT=46721 DIR_CLIENT=\"network\" "
-                "./client_min_strac_recvfrom_sendto_19_0.sh\n");
-    }
-    free(pattern_args);
-    pattern_args = NULL;
 
     parse_net_addr("BM_SYS_CONNECT_ADDR", "BM_SYS_CONNECT_PORT",
                    &bm_connect_addr, &bm_connect_addr_inited);
     parse_net_addr("BM_SYS_BIND_ADDR", "BM_SYS_BIND_PORT", &bm_bind_addr,
                    &bm_bind_addr_inited);
+
+    V_UNUSED(init_size, num_threads);
 }
 
 static inline void
