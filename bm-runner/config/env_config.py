@@ -48,8 +48,4 @@ class EnvUniversalConfig:
 
     @staticmethod
     def get(env_var: UniversalConfig) -> Optional[str]:
-        value = os.getenv(env_var.value)
-        if value is None:
-            return None
-        else:
-            return value
+        return os.getenv(env_var.value)
