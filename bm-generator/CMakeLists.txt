@@ -13,7 +13,7 @@ if(CSB_SYZKALLER_FETCH)
     FetchContent_Declare(
         ${SYZKALLER}
         GIT_REPOSITORY https://github.com/open-s4c/syzkaller.git
-        GIT_TAG e9f652bd66695ed3e6cc5ae7883a9baa954714dd
+        GIT_TAG 7914e1189c073faed71ea695bac46dfb1111bd23
         GIT_PROGRESS TRUE
         EXCLUDE_FROM_ALL)
 
