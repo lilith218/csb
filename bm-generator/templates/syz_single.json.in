@@ -49,7 +49,7 @@ $_begin(BINNAME = [[1; 2]]);
         { "name": "BINNAME","operations": [1024]}
 $_end();
     ]
-$_begin(META_NAME = [[1; 2]]);
+$_begin(META_NAME = [[1; 2]], GROUP_NAME = [[gen-ws]]);
 	,
 	"plugins": [
 	 {
@@ -60,7 +60,7 @@ $_begin(META_NAME = [[1; 2]]);
 			"5000",
 			"1",
 			"{homedir}/build/bench/network/client",
-			"{homedir}/bench/targets/gen-ws/syz/META_NAME"
+			"{homedir}/bench/targets/GROUP_NAME/syz/META_NAME"
 		]
 	 }
   ]
