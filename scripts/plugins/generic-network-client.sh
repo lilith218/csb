@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 if [ $# -ne 4 ]; then
-    echo "Usage: $0 <PORT> <CLIENT_PATH> <META_PATH>"
+    echo "Usage: $0 <PORT> <CLIENT_COUNT> <CLIENT_PATH> <META_PATH>"
     exit 1
 fi
 
