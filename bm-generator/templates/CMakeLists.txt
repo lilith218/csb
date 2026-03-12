@@ -19,8 +19,13 @@ add_custom_command(
 
 # Find all single template files
 file(GLOB TEMPLATES *single*.in)
-# Output subfolder for auto-generated workspace
-set(SUBDIR "gen-ws")
+set(SUBDIR $ENV{CSB_RESULTS_GROUP})
+if(SUBDIR)
+    message("Generation workspace is set to: ${SUBDIR}")
+else()
+    # Output subfolder for auto-generated workspace
+    set(SUBDIR "gen-ws")
+endif()
 set(GENERATED_HEADER_DIR "${CMAKE_SOURCE_DIR}/bench/targets/${SUBDIR}/syz")
 # Collect all input headers
 file(GLOB HEADERS CONFIGURE_DEPENDS "${GENERATED_HEADER_DIR}/*.h")
