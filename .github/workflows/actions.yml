@@ -14,6 +14,9 @@ jobs:
         run: sudo apt-get install -y libhiredis-dev
       - name: Test Builtin Benchmarks
         uses: actions/checkout@v4
+      # Set up the environment variable for LeakSanitizer
+      - name: Set LSAN_OPTIONS for LeakSanitizer
+        run: echo "LSAN_OPTIONS=verbosity=1:log_threads=1" >> $GITHUB_ENV
       - name: Configure Testing
         run: cmake -S. -Bbuild ${{ matrix.config }}
       - name: Build Tests
