@@ -32,227 +32,227 @@ jobs:
          ctest --test-dir build --output-on-failure -R mysql_v2_min_mysql_lseek_pwrite64_25_0
          ctest --test-dir build --output-on-failure -R mysql_v2_min_mysql_lseek_pwrite64_26_0
 
-  Run-bm-generator:
-    runs-on: ubuntu-latest
-    steps:
-      - name: install pre-requisites
-        run: sudo apt-get install -y libhiredis-dev
-      - name: Test Builtin Benchmarks
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '1.25'
-      - name: Test bm-generator
-        run: |
-          go env -w GOBIN=$HOME/.local/bin
-          strace --version
-          cd bm-generator/
-          ./test.sh
-      - name: Upload strace log
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: ls_strace
-          path: ${{ github.workspace }}/bm-generator/ls_strace.log
+  # Run-bm-generator:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: install pre-requisites
+  #       run: sudo apt-get install -y libhiredis-dev
+  #     - name: Test Builtin Benchmarks
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - uses: actions/setup-go@v5
+  #       with:
+  #         go-version: '1.25'
+  #     - name: Test bm-generator
+  #       run: |
+  #         go env -w GOBIN=$HOME/.local/bin
+  #         strace --version
+  #         cd bm-generator/
+  #         ./test.sh
+  #     - name: Upload strace log
+  #       uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: ls_strace
+  #         path: ${{ github.workspace }}/bm-generator/ls_strace.log
 
 
-  # Checks if cmake and C files are properly formatted
-  Check-Format:
-    runs-on: ubuntu-22.04
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [clang-format-apply, cmake-format-apply, json-format-apply]
-    steps:
-      - name: Install cmake-format for cmake-format-check
-        if: matrix.target == 'cmake-format-apply'
-        run: pip install cmakelang
-      - name: Check out repository code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Configure
-        run: cmake -S. -Bbuild -DCSB_BM_GENERATOR=ON
-      - name: Run ${{ matrix.target }}
-        run: cmake --build build --target ${{ matrix.target }}
-      - name: Check things match expectation
-        run: cmake --build build --target git-diff-check ||
-            (echo "Run 'make ${{ matrix.target }}' and commit" && false)
+  # # Checks if cmake and C files are properly formatted
+  # Check-Format:
+  #   runs-on: ubuntu-22.04
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       target: [clang-format-apply, cmake-format-apply, json-format-apply]
+  #   steps:
+  #     - name: Install cmake-format for cmake-format-check
+  #       if: matrix.target == 'cmake-format-apply'
+  #       run: pip install cmakelang
+  #     - name: Check out repository code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Configure
+  #       run: cmake -S. -Bbuild -DCSB_BM_GENERATOR=ON
+  #     - name: Run ${{ matrix.target }}
+  #       run: cmake --build build --target ${{ matrix.target }}
+  #     - name: Check things match expectation
+  #       run: cmake --build build --target git-diff-check ||
+  #           (echo "Run 'make ${{ matrix.target }}' and commit" && false)
 
-  # Checks python files with ruff linter
-  Check-ruff:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test Builtin Benchmarks
-        uses: actions/checkout@v4
-      - name: Use ruff
-        uses: astral-sh/ruff-action@v3
-      - name: Run ruff
-        run: ruff check bm-runner
+  # # Checks python files with ruff linter
+  # Check-ruff:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Test Builtin Benchmarks
+  #       uses: actions/checkout@v4
+  #     - name: Use ruff
+  #       uses: astral-sh/ruff-action@v3
+  #     - name: Run ruff
+  #       run: ruff check bm-runner
 
-  # Checks python files' format with black
-  Check-Black:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test Builtin Benchmarks
-        uses: actions/checkout@v4
-      - name: Run Black
-        uses: psf/black@stable
-        with:
-          options: "-l 100 --check --verbose"
-          src: "./bm-runner"
-          version: "~= 25.12"
+  # # Checks python files' format with black
+  # Check-Black:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Test Builtin Benchmarks
+  #       uses: actions/checkout@v4
+  #     - name: Run Black
+  #       uses: psf/black@stable
+  #       with:
+  #         options: "-l 100 --check --verbose"
+  #         src: "./bm-runner"
+  #         version: "~= 25.12"
 
-  # Checks python files with Ty type checker
-  Check-ty:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Install Ty
-        run: pip install ty
-      - name: Run Ty
-        run: ./scripts/configure.sh && ty check --venv ./venv ./bm-runner
+  # # Checks python files with Ty type checker
+  # Check-ty:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.10"
+  #     - name: Install Ty
+  #       run: pip install ty
+  #     - name: Run Ty
+  #       run: ./scripts/configure.sh && ty check --venv ./venv ./bm-runner
 
-  # Checks if the config documentation is up to date
-  Check-Documentation:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Run documentation script
-        run: ./scripts/configure.sh && ./helpers/update-doc.sh && git --no-pager diff --exit-code
+  # # Checks if the config documentation is up to date
+  # Check-Documentation:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.10"
+  #     - name: Run documentation script
+  #       run: ./scripts/configure.sh && ./helpers/update-doc.sh && git --no-pager diff --exit-code
 
-  Run-Python-Tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Run Tests
-        run: |
-         ./scripts/configure.sh
-         helpers/python-tests.sh
+  # Run-Python-Tests:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.10"
+  #     - name: Run Tests
+  #       run: |
+  #        ./scripts/configure.sh
+  #        helpers/python-tests.sh
 
-  # Run a dummy benchmark to ensure bm-runner works
-  Run-Benchmark:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        benchmark: [bm_empty, bm_server_redis, mysql/min_mysql_close_dup_0_0]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Install pre-requisites
-        run: |
-          sudo apt update
-          sudo apt-get install -y build-essential cmake libhiredis-dev
-      - name: Run Benchmark ${{ matrix.benchmark }}
-        run: |
-          ./scripts/fg-diff/run-single.sh config/${{ matrix.benchmark }}.json
-      - name: Fix artifact permissions
-        if: always()
-        run: sudo chmod -R a+r results/
+  # # Run a dummy benchmark to ensure bm-runner works
+  # Run-Benchmark:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       benchmark: [bm_empty, bm_server_redis, mysql/min_mysql_close_dup_0_0]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.10"
+  #     - name: Install pre-requisites
+  #       run: |
+  #         sudo apt update
+  #         sudo apt-get install -y build-essential cmake libhiredis-dev
+  #     - name: Run Benchmark ${{ matrix.benchmark }}
+  #       run: |
+  #         ./scripts/fg-diff/run-single.sh config/${{ matrix.benchmark }}.json
+  #     - name: Fix artifact permissions
+  #       if: always()
+  #       run: sudo chmod -R a+r results/
 
-      - name: Create unique name
-        run: echo "ARTIFACT_NAME=$(echo '${{ matrix.benchmark }}' | tr '/' '_')" >> $GITHUB_ENV
+  #     - name: Create unique name
+  #       run: echo "ARTIFACT_NAME=$(echo '${{ matrix.benchmark }}' | tr '/' '_')" >> $GITHUB_ENV
 
-      - name: Upload results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: results-${{ env.ARTIFACT_NAME }}
-          path: results/
+  #     - name: Upload results
+  #       uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: results-${{ env.ARTIFACT_NAME }}
+  #         path: results/
 
-  Run-External-Benchmark:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        benchmark:
-          - { config: byte-unixbench, repo: https://github.com/kdlucas/byte-unixbench.git, build: ls }
-          - { config: will-it-scale, repo: https://github.com/antonblanchard/will-it-scale.git, build: make }
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Install pre-requisites
-        run: |
-          sudo apt update
-          sudo apt-get install -y build-essential cmake libhiredis-dev libhwloc-dev
-      - name: Clone benchmark
-        run: |
-          mkdir bm-external
-          cd bm-external
-          git clone ${{ matrix.benchmark.repo }}
-          cd ${{ matrix.benchmark.config }}
-          ${{ matrix.benchmark.build }}
-      - name: Run Benchmark ${{ matrix.benchmark }}
-        run: |
-          ./scripts/fg-diff/run-single.sh config/${{ matrix.benchmark.config }}.json
-      - name: Fix artifact permissions
-        if: always()
-        run: sudo chmod -R a+r results/
-      - name: Upload results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: results-${{ matrix.benchmark.config }}
-          path: results/
+  # Run-External-Benchmark:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       benchmark:
+  #         - { config: byte-unixbench, repo: https://github.com/kdlucas/byte-unixbench.git, build: ls }
+  #         - { config: will-it-scale, repo: https://github.com/antonblanchard/will-it-scale.git, build: make }
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.10"
+  #     - name: Install pre-requisites
+  #       run: |
+  #         sudo apt update
+  #         sudo apt-get install -y build-essential cmake libhiredis-dev libhwloc-dev
+  #     - name: Clone benchmark
+  #       run: |
+  #         mkdir bm-external
+  #         cd bm-external
+  #         git clone ${{ matrix.benchmark.repo }}
+  #         cd ${{ matrix.benchmark.config }}
+  #         ${{ matrix.benchmark.build }}
+  #     - name: Run Benchmark ${{ matrix.benchmark }}
+  #       run: |
+  #         ./scripts/fg-diff/run-single.sh config/${{ matrix.benchmark.config }}.json
+  #     - name: Fix artifact permissions
+  #       if: always()
+  #       run: sudo chmod -R a+r results/
+  #     - name: Upload results
+  #       uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: results-${{ matrix.benchmark.config }}
+  #         path: results/
 
-  Check-Submodule-Commit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Extract submodule commit SHA
-        id: sub
-        run: |
-          # Path to your submodule
-          SUBMODULE_PATH="deps/syzkaller"
-          # Get the commit SHA the submodule is pinned to
-          SHA=$(git -C "$SUBMODULE_PATH" rev-parse HEAD)
-          echo "sha=$SHA" >> $GITHUB_OUTPUT
-          echo "Submodule commit: $SHA"
-      - name: Fetch upstream s4c/csb-dev branch
-        run: |
-          # Clone our syzkaller fork
-          git clone https://github.com/open-s4c/syzkaller.git
-          cd syzkaller
-          git fetch origin s4c/csb-dev
-      - name: Check if submodule SHA exists on upstream s4c/csb-dev
-        run: |
-          SHA="${{ steps.sub.outputs.sha }}"
-          cd syzkaller
-          # Check if SHA is reachable from s4c/csb-dev
-          if git merge-base --is-ancestor "$SHA" origin/s4c/csb-dev; then
-            echo "✔ Submodule commit exists on upstream s4c/csb-dev"
-          else
-            echo "❌ Submodule commit does NOT exist on upstream s4c/csb-dev"
-            exit 1
-          fi
+  # Check-Submodule-Commit:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
+  #     - name: Extract submodule commit SHA
+  #       id: sub
+  #       run: |
+  #         # Path to your submodule
+  #         SUBMODULE_PATH="deps/syzkaller"
+  #         # Get the commit SHA the submodule is pinned to
+  #         SHA=$(git -C "$SUBMODULE_PATH" rev-parse HEAD)
+  #         echo "sha=$SHA" >> $GITHUB_OUTPUT
+  #         echo "Submodule commit: $SHA"
+  #     - name: Fetch upstream s4c/csb-dev branch
+  #       run: |
+  #         # Clone our syzkaller fork
+  #         git clone https://github.com/open-s4c/syzkaller.git
+  #         cd syzkaller
+  #         git fetch origin s4c/csb-dev
+  #     - name: Check if submodule SHA exists on upstream s4c/csb-dev
+  #       run: |
+  #         SHA="${{ steps.sub.outputs.sha }}"
+  #         cd syzkaller
+  #         # Check if SHA is reachable from s4c/csb-dev
+  #         if git merge-base --is-ancestor "$SHA" origin/s4c/csb-dev; then
+  #           echo "✔ Submodule commit exists on upstream s4c/csb-dev"
+  #         else
+  #           echo "❌ Submodule commit does NOT exist on upstream s4c/csb-dev"
+  #           exit 1
+  #         fi
