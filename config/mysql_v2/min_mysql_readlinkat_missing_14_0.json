@@ -33,7 +33,6 @@
 	],
 	"benchmark_config" : {
 		"duration": 60,
-		"initial_size": [5000],
 		"monitors" : { "mpstat" : ["-n", "-u", "-I", "SCPU,SUM", "-P", "0"],
 			       "perf" : ["-C", "0"]
 			     }
@@ -41,7 +40,8 @@
 	"containers": {
 		"container_list": {"values": [[1], {"min": 5, "step": 5, "max": 30 }]},
 		"core_count": 1,
-		"name" : "MySQL"
+		"name" : "MySQL",
+		"port" : 8000
     },
     "applications": [
         { "name": "mysql_v2_min_mysql_readlinkat_missing_14_0","operations": [1024]}
